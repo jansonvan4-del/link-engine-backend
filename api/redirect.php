@@ -1,7 +1,7 @@
 <?php
-ini_set('display_errors', 0); // Nonaktifkan error display agar HTML meta tidak terganggu warning
-error_reporting(0);
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 // Bypass Ngrok Browser Warning Page
 header('ngrok-skip-browser-warning: true');
 
