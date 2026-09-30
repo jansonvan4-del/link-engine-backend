@@ -1,17 +1,37 @@
 <?php
-$host     = getenv('DB_HOST')     ?: 'db.aiaopyesqtchygsllwma.supabase.co';
-$port     = getenv('DB_PORT')     ?: '5432';
-$dbname   = getenv('DB_NAME')     ?: 'postgres';
-$user     = getenv('DB_USER')     ?: 'postgres';
-$password = getenv('DB_PASSWORD') ?: 'marabunta46'; // Ganti dengan password Supabase Anda
+// Konfigurasi Supabase REST API
+define('SUPABASE_URL', getenv('SUPABASE_URL') ?: 'https://aiaopyesqtchygsllwma.supabase.co');
+define('SUPABASE_KEY', getenv('SUPABASE_KEY') ?: 'sb_publishable_4chxDB0H3MpvafCXsmSm5A_R66_nKmk');
 
-try {
-    $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
-    $conn = new PDO($dsn, $user, $password, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]);
-} catch (PDOException $e) {
-    die("Error Koneksi Database: " . $e->getMessage());
+/**
+ * Fungsi helper untuk query ke Supabase via REST API
+ */
+function supabase_request($endpoint, $method = 'GET', $data = null) {
+    $url = SUPABASE_URL . '/rest/v1/' . $endpoint;
+    
+    $headers = [
+        'apikey: ' . SUPABASE_KEY,
+        'Authorization: Bearer ' . SUPABASE_KEY,
+        'Content-Type: application/json',
+        'Prefer: return=representation'
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+
+    if ($data !== null) {
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    }
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    return [
+        'code' => $httpCode,
+        'data' => json_decode($response, true)
+    ];
 }
 ?>
