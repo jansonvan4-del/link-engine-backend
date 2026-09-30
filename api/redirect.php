@@ -14,33 +14,29 @@ if (empty($slug)) {
     exit;
 }
 
-// Query menggunakan PDO dan LEFT JOIN ke tabel domains
-try {
-    $stmt = $conn->prepare("
-        SELECT l.*, d.domain_name 
-        FROM links l 
-        LEFT JOIN domains d ON l.domain_id = d.id 
-        WHERE l.slug = :slug 
-        LIMIT 1
-    ");
-    $stmt->execute([':slug' => $slug]);
-    $linkData = $stmt->fetch();
+// Fetch data link dari Supabase REST API (Termasuk Join ke Tabel Domains)
+$response = supabase_request("links?slug=eq." . urlencode($slug) . "&select=*,domains(domain_name)");
 
-    if (!$linkData) {
-        die("<h3>404 - Link tidak ditemukan.</h3>");
-    }
-} catch (PDOException $e) {
-    die("Error Query: " . $e->getMessage());
+if ($response['code'] !== 200 || empty($response['data'])) {
+    http_response_code(404);
+    die("<h3>404 - Link tidak ditemukan.</h3>");
 }
 
-// Deteksi Bot/Crawler
+$linkData = $response['data'][0];
+
+// Format nama domain dari relasi Supabase jika ada
+if (isset($linkData['domains']['domain_name'])) {
+    $linkData['domain_name'] = $linkData['domains']['domain_name'];
+}
+
+// Deteksi Bot / Crawler
 $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 $is_crawler = preg_match('/(facebookexternalhit|Facebot|WhatsApp|Twitterbot|TelegramBot|Slackbot|LinkedInBot|OpenGraph|bot|crawler|spider|curl|fetch)/i', $user_agent);
 
-// Hitung Klik HANYA jika pengunjung biasa
+// Hitung Klik (Increment clicks) HANYA jika pengunjung biasa
 if (!$is_crawler) {
-    $update_click = $conn->prepare("UPDATE links SET clicks = clicks + 1 WHERE id = :id");
-    $update_click->execute([':id' => $linkData['id']]);
+    $newClicks = ($linkData['clicks'] ?? 0) + 1;
+    supabase_request("links?id=eq." . $linkData['id'], 'PATCH', ['clicks' => $newClicks]);
 }
 
 // Olah Target URL
@@ -88,7 +84,7 @@ $current_url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         <meta name="twitter:image" content="<?= htmlspecialchars($image, ENT_QUOTES, 'UTF-8'); ?>">
     <?php endif; ?>
 
-    <?php if ($linkData['lp'] === 'OFF' && !$is_crawler): ?>
+    <?php if (($linkData['lp'] ?? 'OFF') === 'OFF' && !$is_crawler): ?>
         <meta http-equiv="refresh" content="2;url=<?= htmlspecialchars($target_url); ?>">
         <script>
             setTimeout(function() {
@@ -100,7 +96,7 @@ $current_url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<?php if ($linkData['lp'] === 'OFF' && !$is_crawler): ?>
+<?php if (($linkData['lp'] ?? 'OFF') === 'OFF' && !$is_crawler): ?>
 <body class="bg-slate-900 text-white flex items-center justify-center min-h-screen">
     <p class="text-sm text-slate-400">Mengarahkan Anda ke halaman tujuan...</p>
 </body>
@@ -120,7 +116,7 @@ $current_url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             </div>
         <?php endif; ?>
 
-        <?php if ($linkData['lp'] !== 'OFF'): ?>
+        <?php if (($linkData['lp'] ?? 'OFF') !== 'OFF'): ?>
         <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 space-y-2">
             <span class="text-xs text-slate-400 uppercase tracking-wider block font-semibold">Mengalihkan Dalam</span>
             <div class="text-4xl font-extrabold text-cyan-400" id="countdown">5</div>
@@ -128,16 +124,16 @@ $current_url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         <?php endif; ?>
 
         <div>
-            <a id="redirect-btn" href="<?= htmlspecialchars($target_url); ?>" class="<?= $linkData['lp'] === 'OFF' ? '' : 'hidden' ?> block w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-cyan-600/30 text-sm">
+            <a id="redirect-btn" href="<?= htmlspecialchars($target_url); ?>" class="<?= ($linkData['lp'] ?? 'OFF') === 'OFF' ? '' : 'hidden' ?> block w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-cyan-600/30 text-sm">
                 Lanjutkan Ke Link Tujuan →
             </a>
-            <?php if ($linkData['lp'] !== 'OFF'): ?>
+            <?php if (($linkData['lp'] ?? 'OFF') !== 'OFF'): ?>
             <p id="wait-msg" class="text-xs text-slate-500">Tombol akan muncul setelah hitungan mundur selesai...</p>
             <?php endif; ?>
         </div>
     </div>
 
-    <?php if ($linkData['lp'] !== 'OFF'): ?>
+    <?php if (($linkData['lp'] ?? 'OFF') !== 'OFF'): ?>
     <script>
         let seconds = 5;
         const timerElement = document.getElementById('countdown');
