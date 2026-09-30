@@ -1,45 +1,46 @@
 <?php
+ini_set('display_errors', 0);
+error_reporting(0);
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 // Bypass Ngrok Browser Warning Page
 header('ngrok-skip-browser-warning: true');
 
-require_once 'config/db.php';
-
-// Cek apakah koneksi database berhasil
-if (!$conn || $conn->connect_error) {
-    die("Error Koneksi Database.");
-}
+require_once __DIR__ . '/../config/db.php';
 
 $slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
 
 if (empty($slug)) {
-    header("Location: index.php");
+    header("Location: /");
     exit;
 }
 
-$stmt = $conn->prepare("SELECT * FROM links WHERE slug = ? LIMIT 1");
-$stmt->bind_param("s", $slug);
-$stmt->execute();
-$result = $stmt->get_result();
+// Query menggunakan PDO dan LEFT JOIN ke tabel domains
+try {
+    $stmt = $conn->prepare("
+        SELECT l.*, d.domain_name 
+        FROM links l 
+        LEFT JOIN domains d ON l.domain_id = d.id 
+        WHERE l.slug = :slug 
+        LIMIT 1
+    ");
+    $stmt->execute([':slug' => $slug]);
+    $linkData = $stmt->fetch();
 
-if ($result->num_rows === 0) {
-    die("<h3>404 - Link tidak ditemukan.</h3>");
+    if (!$linkData) {
+        die("<h3>404 - Link tidak ditemukan.</h3>");
+    }
+} catch (PDOException $e) {
+    die("Error Query: " . $e->getMessage());
 }
 
-$linkData = $result->fetch_assoc();
-$stmt->close();
-
-// Deteksi Bot/Crawler Sosial Media (Termasuk OpenGraph.xyz dan Facebook)
+// Deteksi Bot/Crawler
 $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 $is_crawler = preg_match('/(facebookexternalhit|Facebot|WhatsApp|Twitterbot|TelegramBot|Slackbot|LinkedInBot|OpenGraph|bot|crawler|spider|curl|fetch)/i', $user_agent);
 
-// Hitung Klik HANYA jika diakses oleh manusia/pengunjung sungguhan
+// Hitung Klik HANYA jika pengunjung biasa
 if (!$is_crawler) {
-    $update_click = $conn->prepare("UPDATE links SET clicks = clicks + 1 WHERE id = ?");
-    $update_click->bind_param("i", $linkData['id']);
-    $update_click->execute();
+    $update_click = $conn->prepare("UPDATE links SET clicks = clicks + 1 WHERE id = :id");
+    $update_click->execute([':id' => $linkData['id']]);
 }
 
 // Olah Target URL
@@ -49,12 +50,11 @@ if (!empty($linkData['click_id'])) {
     $target_url .= $separator . "click_id=" . urlencode($linkData['click_id']);
 }
 
-// Data Meta (Memberikan fallback jika data kosong)
+// Data Meta
 $title = !empty($linkData['meta_title']) ? $linkData['meta_title'] : 'Link Engine';
 $desc  = !empty($linkData['meta_description']) ? $linkData['meta_description'] : 'Klik link untuk menuju ke halaman tujuan.';
 $image = !empty($linkData['meta_image']) ? trim($linkData['meta_image']) : '';
 
-// Mengambil URL Link saat ini
 $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://";
 $current_url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 ?>
@@ -89,7 +89,6 @@ $current_url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     <?php endif; ?>
 
     <?php if ($linkData['lp'] === 'OFF' && !$is_crawler): ?>
-        <!-- Redirect Otomatis KHUSUS Pengunjung Biasa (Crawler FB/WA/OpenGraph dikecualikan) -->
         <meta http-equiv="refresh" content="2;url=<?= htmlspecialchars($target_url); ?>">
         <script>
             setTimeout(function() {
@@ -108,7 +107,6 @@ $current_url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 </html>
 <?php exit; endif; ?>
 
-<!-- LANDING PAGE PERANTARA (Atau tampilan untuk Bot jika LP=OFF) -->
 <body class="bg-slate-900 text-white min-h-screen flex items-center justify-center p-4">
     <div class="max-w-md w-full bg-slate-800 border border-slate-700 rounded-2xl p-6 text-center shadow-2xl space-y-6">
         <div class="space-y-2">
