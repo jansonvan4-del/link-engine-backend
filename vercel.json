@@ -10,12 +10,8 @@
       "dest": "/api/redirect.php"
     },
     {
-      "src": "/generate.php",
-      "dest": "/api/generate.php"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/api/$1"
+      "dest": "/api/redirect.php"
     }
   ]
 }
