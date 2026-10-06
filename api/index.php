@@ -50,7 +50,7 @@ $domains_list = ($domains_response['code'] === 200 && is_array($domains_response
                     <!-- Target URL -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 mb-1">URL (MONETIZE / LOCKED)</label>
-                        <textarea name="original_url" required rows="3" placeholder="https://target-monetisasi.com/..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs font-mono focus:outline-none focus:border-cyan-500"></textarea>
+                        <textarea name="original_url" required rows="3" placeholder="https://target-monetisasi.com/..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs font-mono focus:outline-none focus:border-cyan-500">https://anadol.hornywwoman.com/?utm_source=da57dc555e50572d&ban=fb&j1=1&s1=148303&s2=2286579&s3=ZHICO&click_id=ZHICO</textarea>
                     </div>
 
                     <!-- Customize Click ID -->
