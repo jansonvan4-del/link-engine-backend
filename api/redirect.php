@@ -14,8 +14,8 @@ if (empty($slug)) {
     exit;
 }
 
-// Fetch data link dari Supabase REST API (Termasuk Join ke Tabel Domains)
-$response = supabase_request("links?slug=eq." . urlencode($slug) . "&select=*,domains(domain_name)");
+// Fetch data link dari Supabase REST API (Tanpa Join ke Tabel Domains)
+$response = supabase_request("links?slug=eq." . urlencode($slug) . "&select=*");
 
 if ($response['code'] !== 200 || empty($response['data'])) {
     http_response_code(404);
@@ -24,10 +24,8 @@ if ($response['code'] !== 200 || empty($response['data'])) {
 
 $linkData = $response['data'][0];
 
-// Format nama domain dari relasi Supabase jika ada
-if (isset($linkData['domains']['domain_name'])) {
-    $linkData['domain_name'] = $linkData['domains']['domain_name'];
-}
+// Format nama domain
+$linkData['domain_name'] = $linkData['domain_used'] ?? $_SERVER['HTTP_HOST'];
 
 // Deteksi Bot / Crawler
 $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
