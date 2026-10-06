@@ -37,7 +37,7 @@ $domains_list = ($domains_response['code'] === 200 && is_array($domains_response
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 mb-1">DOMAIN</label>
                         <select name="domain_used" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:border-cyan-500">
-                            <option value="Random Domain">-- Random Domain --</option>
+                            <!-- <option value="Random Domain">-- Random Domain --</option> -->
                             <?php 
                             foreach ($domains_list as $row) {
                                 $dName = htmlspecialchars($row['domain_name'], ENT_QUOTES, 'UTF-8');
@@ -73,11 +73,10 @@ $domains_list = ($domains_response['code'] === 200 && is_array($domains_response
                             <span class="text-xs font-bold text-slate-600">LP:</span>
                             <select name="lp" class="bg-transparent text-xs font-bold text-cyan-600 focus:outline-none">
                                 <option value="OFF">OFF</option>
-                                <option value="1">LP 1</option>
-                                <option value="2">LP 2</option>
-                                <option value="3">LP 3</option>
-                                <option value="4">LP 4</option>
-                                <option value="5">LP 5</option>
+                                <option value="1">LP 1 Beginner</option>
+                                <option value="2">LP 2 Elementary</option>
+                                <option value="3">LP 3 Intermediate</option>
+                               
                             </select>
                         </div>
 
