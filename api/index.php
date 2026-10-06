@@ -2,7 +2,9 @@
 
 require_once __DIR__ . '/../config/db.php';
 // Ambil data domain aktif dari Supabase REST API
-$domains_response = supabase_request("domains?is_active=eq.true&select=domain_name");
+//$domains_response = supabase_request("domains?is_active=eq.true&select=domain_name");
+
+$domains_response = supabase_request("domains?is_active=eq.1&select=domain_name");
 $domains_list = ($domains_response['code'] === 200 && is_array($domains_response['data'])) ? $domains_response['data'] : [];
 ?>
 <!DOCTYPE html>
