@@ -6,16 +6,16 @@
   },
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
       "src": "/redirect.php",
       "dest": "/api/redirect.php"
     },
     {
+      "src": "/generate.php",
+      "dest": "/api/generate.php"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/index.php"
+      "dest": "/api/$1"
     }
   ]
 }
