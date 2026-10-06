@@ -19,7 +19,11 @@
     },
     {
       "src": "/",
-      "dest": "/api/generate.php"
+      "dest": "/index.php"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/redirect.php?slug=$1"
     }
   ]
 }
