@@ -1,13 +1,9 @@
 <?php
-require_once 'config/db.php';
+require_once __DIR__ . '/config/db.php';
 
-// Ambil data domain dengan penanganan error aman
-$domains_result = $conn->query("SELECT domain_name FROM domains WHERE is_active = 1");
-
-// Jika query gagal atau tabel belum dibuat, set array kosong
-if (!$domains_result) {
-    $domains_result = [];
-}
+// Ambil data domain aktif dari Supabase REST API
+$domains_response = supabase_request("domains?is_active=eq.true&select=domain_name");
+$domains_list = ($domains_response['code'] === 200 && is_array($domains_response['data'])) ? $domains_response['data'] : [];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -23,15 +19,12 @@ if (!$domains_result) {
 <body class="bg-slate-100 text-slate-800 font-sans p-4 md:p-8">
 
     <div class="max-w-5xl mx-auto space-y-4">
-        <!-- Status Indicator -->
         <div class="bg-cyan-50 border border-cyan-200 text-cyan-600 text-center text-xs font-bold py-2 rounded-lg tracking-wider uppercase">
             ⚡ LINK ENGINE ACTIVATED
         </div>
 
-      <!-- KODE BARU (Tambahkan action & method) -->
         <form id="generator-form" action="api/generate.php" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            <!-- KOLOM KIRI: CORE LINK ENGINE -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4 flex flex-col justify-between">
                 <div class="space-y-4">
                     <div class="flex items-center gap-2 text-cyan-600 font-bold text-xs uppercase tracking-wider">
@@ -41,13 +34,12 @@ if (!$domains_result) {
                     <!-- Domain Selector -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 mb-1">DOMAIN</label>
-                       <select name="domain_used" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:border-cyan-500">
-                           
+                        <select name="domain_used" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:border-cyan-500">
+                            <option value="Random Domain">-- Random Domain --</option>
                             <?php 
-                            if ($domains_result && $domains_result->num_rows > 0) {
-                                while($row = $domains_result->fetch_assoc()) {
-                                    echo '<option value="' . htmlspecialchars($row['domain_name']) . '">' . htmlspecialchars($row['domain_name']) . '</option>';
-                                }
+                            foreach ($domains_list as $row) {
+                                $dName = htmlspecialchars($row['domain_name'], ENT_QUOTES, 'UTF-8');
+                                echo '<option value="' . $dName . '">' . $dName . '</option>';
                             }
                             ?>
                         </select>
@@ -77,14 +69,14 @@ if (!$domains_result) {
 
                         <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-2">
                             <span class="text-xs font-bold text-slate-600">LP:</span>
-                           <select name="lp" class="bg-transparent text-xs font-bold text-cyan-600 focus:outline-none">
-    <option value="OFF">OFF</option>
-    <option value="1">LP 1</option>
-    <option value="2">LP 2</option>
-    <option value="3">LP 3</option>
-    <option value="4">LP 4</option>
-    <option value="5">LP 5</option>
-</select>
+                            <select name="lp" class="bg-transparent text-xs font-bold text-cyan-600 focus:outline-none">
+                                <option value="OFF">OFF</option>
+                                <option value="1">LP 1</option>
+                                <option value="2">LP 2</option>
+                                <option value="3">LP 3</option>
+                                <option value="4">LP 4</option>
+                                <option value="5">LP 5</option>
+                            </select>
                         </div>
 
                         <button type="submit" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 rounded-lg text-xs transition-colors flex items-center justify-center gap-1">
@@ -92,7 +84,7 @@ if (!$domains_result) {
                         </button>
                     </div>
 
-                    <!-- RESULT AREA (Kotak Hasil yang Ditandai) -->
+                    <!-- RESULT AREA -->
                     <div id="result-wrapper" class="hidden space-y-2 pt-2">
                         <div id="result-text" class="result-box w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs font-mono text-cyan-700 bg-cyan-50/30"></div>
                         
@@ -130,7 +122,6 @@ if (!$domains_result) {
                     <span>⚙️</span> METADATA & SOCIAL
                 </div>
 
-                <!-- Custom Slug & Jumlah -->
                 <div class="grid grid-cols-3 gap-3">
                     <div class="col-span-2">
                         <label class="block text-xs font-semibold text-slate-500 mb-1">CUSTOM SLUG</label>
@@ -142,19 +133,16 @@ if (!$domains_result) {
                     </div>
                 </div>
 
-                <!-- Judul Meta -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">JUDUL META</label>
                     <input type="text" id="meta_title" name="meta_title" placeholder="Input Judul Link..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:border-cyan-500">
                 </div>
 
-                <!-- Image URL -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">IMAGE URL</label>
                     <input type="url" id="meta_image" name="meta_image" placeholder="https://image.url/..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:border-cyan-500">
                 </div>
 
-                <!-- Deskripsi Meta -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">DESKRIPSI META</label>
                     <textarea id="meta_description" name="meta_description" rows="2" placeholder="Deskripsi link..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:border-cyan-500"></textarea>
@@ -164,11 +152,11 @@ if (!$domains_result) {
                 <div class="pt-2">
                     <label class="block text-xs font-semibold text-slate-500 mb-2">LIVE PREVIEW</label>
                     <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
-                       <img id="preview-img" 
-             src="https://via.placeholder.com/600x315?text=No+Image+Available" 
-             onerror="this.src='https://via.placeholder.com/600x315?text=Image+Load+Error';" 
-             class="w-full h-48 object-cover rounded-t-xl" 
-             alt="Preview Image">
+                        <img id="preview-img" 
+                             src="https://via.placeholder.com/600x315?text=No+Image+Available" 
+                             onerror="this.src='https://via.placeholder.com/600x315?text=Image+Load+Error';" 
+                             class="w-full h-48 object-cover rounded-t-xl" 
+                             alt="Preview Image">
                         <div class="p-3 bg-white border-t border-slate-100">
                             <span class="text-[10px] text-slate-400 font-bold uppercase block">YOUR DOMAIN</span>
                             <h4 id="preview-title" class="font-bold text-slate-800 text-sm truncate">Untitled Link</h4>
