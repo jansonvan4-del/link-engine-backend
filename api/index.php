@@ -56,7 +56,7 @@ $domains_list = ($domains_response['code'] === 200 && is_array($domains_response
                     <!-- Customize Click ID -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 mb-1">CUSTOMIZE CLICK ID</label>
-                        <input type="text" name="click_id" placeholder="TERES21" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:border-cyan-500">
+                        <input type="text" name="click_id" placeholder="Masukkan click id" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:border-cyan-500">
                     </div>
 
                     <!-- Toggles & Generate Button -->
