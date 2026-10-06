@@ -1,5 +1,5 @@
 <?php
-require_once '../config/db.php';
+require_once __DIR__ . '/../config/db.php';
 
 header('Content-Type: application/json');
 
@@ -34,22 +34,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $final_domain = $domain_used;
         if ($domain_used === 'Random Domain') {
-            $rand_query = "SELECT domain_name FROM domains WHERE is_active = 1 ORDER BY RAND() LIMIT 1";
-            $rand_res = $conn->query($rand_query);
-            if ($rand_res && $rand_res->num_rows > 0) {
-                $final_domain = $rand_res->fetch_assoc()['domain_name'];
+            // Fetch random active domain via Supabase
+            $res = supabase_request("domains?is_active=eq.true&select=domain_name");
+            if ($res['code'] === 200 && !empty($res['data'])) {
+                $randomIndex = array_rand($res['data']);
+                $final_domain = $res['data'][$randomIndex]['domain_name'];
             } else {
                 $final_domain = $_SERVER['HTTP_HOST'];
             }
         }
 
-        $stmt = $conn->prepare("INSERT INTO links (slug, original_url, click_id, f_sub, lp, meta_title, meta_image, meta_description, domain_used, shortener_service) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssssssss", $slug, $original_url, $click_id, $f_sub, $lp, $meta_title, $meta_image, $meta_description, $final_domain, $shortener_service);
+        // Insert ke Supabase REST API
+        $payload = [
+            'slug'              => $slug,
+            'original_url'      => $original_url,
+            'click_id'          => $click_id,
+            'f_sub'             => $f_sub,
+            'lp'                => $lp,
+            'meta_title'        => $meta_title,
+            'meta_image'        => $meta_image,
+            'meta_description'  => $meta_description,
+            'domain_used'       => $final_domain,
+            'shortener_service' => $shortener_service
+        ];
 
-        if ($stmt->execute()) {
+        $insertRes = supabase_request("links", "POST", $payload);
+
+        if ($insertRes['code'] === 201 || $insertRes['code'] === 200) {
             $generated_links[] = $protocol . $final_domain . "/" . $slug;
         }
-        $stmt->close();
     }
 
     echo json_encode(['status' => 'success', 'links' => $generated_links]);
