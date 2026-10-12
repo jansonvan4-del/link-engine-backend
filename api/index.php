@@ -32,12 +32,11 @@ $domains_list = ($domains_response['code'] === 200 && is_array($domains_response
                     <div class="flex items-center gap-2 text-cyan-600 font-bold text-xs uppercase tracking-wider">
                         <span>⚡</span> LINK ENGINE
                     </div>
-
                     <!-- Domain Selector -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 mb-1">DOMAIN</label>
                         <select name="domain_used" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:border-cyan-500">
-                            <!-- <option value="Random Domain">-- Random Domain --</option> -->
+                            <option value="Random Domain">-- Random Domain --</option>
                             <?php 
                             foreach ($domains_list as $row) {
                                 $dName = htmlspecialchars($row['domain_name'], ENT_QUOTES, 'UTF-8');
@@ -46,6 +45,7 @@ $domains_list = ($domains_response['code'] === 200 && is_array($domains_response
                             ?>
                         </select>
                     </div>
+            
 
                     <!-- Target URL -->
                     <div>
