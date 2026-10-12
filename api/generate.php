@@ -29,17 +29,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $generated_links = [];
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
     
+    // Ambil daftar domain aktif jika memilih Random Domain
+    $active_domains = [];
+    if ($domain_used === 'Random Domain') {
+        // Coba query dengan status numeric (is_active=1)
+        $res = supabase_request("domains?is_active=eq.1&select=domain_name");
+        
+        // Jika tidak ada hasil, coba query dengan boolean (is_active=true)
+        if ($res['code'] !== 200 || empty($res['data'])) {
+            $res = supabase_request("domains?is_active=eq.true&select=domain_name");
+        }
+
+        if ($res['code'] === 200 && !empty($res['data'])) {
+            $active_domains = $res['data'];
+        }
+    }
+
     for ($i = 0; $i < $bulk_qty; $i++) {
         $slug = !empty($custom_slug) ? (($bulk_qty > 1) ? $custom_slug . "-" . ($i + 1) : $custom_slug) : generateRandomSlug(16);
 
         $final_domain = $domain_used;
+        
+        // Logika Pemilihan Random Domain
         if ($domain_used === 'Random Domain') {
-            // Fetch random active domain via Supabase
-            $res = supabase_request("domains?is_active=eq.true&select=domain_name");
-            if ($res['code'] === 200 && !empty($res['data'])) {
-                $randomIndex = array_rand($res['data']);
-                $final_domain = $res['data'][$randomIndex]['domain_name'];
+            if (!empty($active_domains)) {
+                $randomIndex = array_rand($active_domains);
+                $final_domain = $active_domains[$randomIndex]['domain_name'];
             } else {
+                // Fallback jika tidak ada domain aktif di database
                 $final_domain = $_SERVER['HTTP_HOST'];
             }
         }
