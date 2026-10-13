@@ -20,7 +20,7 @@ $response = supabase_request("links?slug=eq." . urlencode($slug) . "&select=*");
 
 if (!isset($response['code']) || $response['code'] !== 200 || empty($response['data'])) {
     http_response_code(404);
-    die("<h3 style='color:white; text-align:center; padding-top:50px;'>404 - Link tidak ditemukan.</h3>");
+    die("<h3 style='color:white; text-align:center; padding-top:50px;'>404 - Link not found.</h3>");
 }
 
 $linkData = $response['data'][0];
@@ -47,7 +47,7 @@ if (!empty($linkData['click_id'])) {
 
 // Data Meta
 $title = !empty($linkData['meta_title']) ? $linkData['meta_title'] : 'Live Session Today';
-$desc  = !empty($linkData['meta_description']) ? $linkData['meta_description'] : 'Klik link untuk menuju ke halaman tujuan.';
+$desc  = !empty($linkData['meta_description']) ? $linkData['meta_description'] : 'Click the link to proceed to the destination page.';
 $image = !empty($linkData['meta_image']) ? trim($linkData['meta_image']) : '';
 
 // URL Link saat ini
@@ -58,7 +58,7 @@ $current_url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $lp_mode = strtoupper(trim((string)($linkData['lp'] ?? 'OFF')));
 ?>
 <!DOCTYPE html>
-<html lang="id" prefix="og: https://ogp.me/ns#">
+<html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -165,15 +165,15 @@ switch ($lp_mode) {
                 <?php endif; ?>
 
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 space-y-2">
-                    <span class="text-xs text-slate-400 uppercase tracking-wider block font-semibold">Mengalihkan Dalam</span>
+                    <span class="text-xs text-slate-400 uppercase tracking-wider block font-semibold">Redirecting In</span>
                     <div class="text-4xl font-extrabold text-cyan-400" id="countdown">5</div>
                 </div>
 
                 <div>
                     <a id="redirect-btn" href="<?= htmlspecialchars($target_url); ?>" class="hidden block w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-cyan-600/30 text-sm">
-                        Lanjutkan Ke Link Tujuan →
+                        Continue to Destination Link →
                     </a>
-                    <p id="wait-msg" class="text-xs text-slate-500">Tombol akan muncul setelah hitungan mundur selesai...</p>
+                    <p id="wait-msg" class="text-xs text-slate-500">Button will appear after the countdown finishes...</p>
                 </div>
             </div>
 
@@ -212,8 +212,8 @@ switch ($lp_mode) {
                 </div>
 
                 <div class="space-y-1">
-                    <h1 class="text-2xl font-extrabold text-white tracking-wide">Portal Konten</h1>
-                    <p id="status-text" class="text-xs font-semibold text-cyan-400 transition-all duration-300">Mengecek Koneksi...</p>
+                    <h1 class="text-2xl font-extrabold text-white tracking-wide">Content Portal</h1>
+                    <p id="status-text" class="text-xs font-semibold text-cyan-400 transition-all duration-300">Checking Connection...</p>
                 </div>
 
                 <div class="w-full bg-slate-800/80 h-1.5 rounded-full overflow-hidden">
@@ -222,19 +222,19 @@ switch ($lp_mode) {
 
                 <div class="py-1">
                     <p class="text-xs font-medium text-purple-300">
-                        <span id="online-counter" class="font-bold">603</span> orang sedang online
+                        <span id="online-counter" class="font-bold">603</span> people online right now
                     </p>
                 </div>
 
                 <div>
                     <a href="<?= htmlspecialchars($target_url); ?>" id="action-btn" class="btn-portal-cyan block w-full text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg text-sm transition-all duration-300 opacity-60 pointer-events-none">
-                        Klik Untuk Melanjutkan &nbsp;&rarr;
+                        Click to Continue &nbsp;&rarr;
                     </a>
                 </div>
 
                 <div class="pt-1">
                     <p class="text-[10px] text-slate-500 tracking-widest uppercase font-semibold">
-                        KONEKSI CEPAT &bull; PORTAL AMAN
+                        FAST CONNECTION &bull; SECURE PORTAL
                     </p>
                 </div>
             </div>
@@ -243,7 +243,7 @@ switch ($lp_mode) {
                 setTimeout(() => {
                     const statusText = document.getElementById('status-text');
                     const actionBtn = document.getElementById('action-btn');
-                    if (statusText) statusText.innerText = "Koneksi Siap";
+                    if (statusText) statusText.innerText = "Connection Ready";
                     if (actionBtn) actionBtn.classList.remove('opacity-60', 'pointer-events-none');
                 }, 2500);
 
@@ -352,16 +352,7 @@ switch ($lp_mode) {
         <?php
         break;
 
-    default:
-        // ==================== LP OFF / DIRECT REDIRECT ====================
-        ?>
-        <body class="text-white flex items-center justify-center min-h-screen">
-            <p class="text-sm text-slate-400">Mengarahkan Anda ke halaman tujuan...</p>
-        </body>
-        </html>
-        <?php
-        break;
-case '4':
+    case '4':
         // ==================== LANDING PAGE 4 (VIDEO / STREAMING PLAYER) ====================
         ?>
         <body class="bg-black text-white min-h-screen flex items-center justify-center p-4">
@@ -390,7 +381,7 @@ case '4':
                 </div>
 
                 <div class="space-y-1 text-center">
-                    <p id="status-lp4" class="text-xs font-semibold text-slate-400">Mempersiapkan Stream Buffering...</p>
+                    <p id="status-lp4" class="text-xs font-semibold text-slate-400">Preparing Stream Buffering...</p>
                     <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
                         <div class="bg-red-600 h-full w-0 animate-progress"></div>
                     </div>
@@ -398,12 +389,12 @@ case '4':
 
                 <div>
                     <a href="<?= htmlspecialchars($target_url); ?>" id="btn-lp4" class="block w-full text-center bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-red-900/40 opacity-60 pointer-events-none">
-                        ▶ PUTAR SEKARANG
+                        ▶ PLAY NOW
                     </a>
                 </div>
 
                 <div class="text-center pt-1">
-                    <p class="text-[10px] text-slate-500">Koneksi Enkripsi SSL 256-Bit • Aman & Bebas Iklan</p>
+                    <p class="text-[10px] text-slate-500">SSL 256-Bit Encrypted Connection • Safe & Ad-Free</p>
                 </div>
             </div>
 
@@ -412,7 +403,7 @@ case '4':
                     const statusLP4 = document.getElementById('status-lp4');
                     const btnLP4 = document.getElementById('btn-lp4');
                     const loader = document.getElementById('play-loader');
-                    if (statusLP4) statusLP4.innerText = "Buffer Selesai! Klik Putar Sekarang";
+                    if (statusLP4) statusLP4.innerText = "Buffer Complete! Click Play Now";
                     if (btnLP4) btnLP4.classList.remove('opacity-60', 'pointer-events-none');
                     if (loader) {
                         loader.classList.remove('animate-spin', 'border-t-red-600');
@@ -425,7 +416,7 @@ case '4':
         <?php
         break;
 
-   case '5':
+    case '5':
         // ==================== LANDING PAGE 5 (MODERN SECURITY VERIFICATION) ====================
         ?>
         <body class="bg-[#030712] text-slate-100 min-h-screen flex items-center justify-center p-4 font-sans selection:bg-indigo-500 selection:text-white">
@@ -441,8 +432,8 @@ case '4':
                         🛡️
                     </div>
                     <div>
-                        <h3 class="font-bold text-white text-base tracking-tight">Verifikasi Akses Aman</h3>
-                        <p class="text-xs text-slate-400">Sistem perlindungan enkripsi cerdas</p>
+                        <h3 class="font-bold text-white text-base tracking-tight">Secure Access Verification</h3>
+                        <p class="text-xs text-slate-400">Smart encryption protection system</p>
                     </div>
                 </div>
 
@@ -458,8 +449,8 @@ case '4':
                             </div>
                         </label>
                         <div>
-                            <span class="text-xs font-semibold text-slate-200 block">Konfirmasi Keamanan</span>
-                            <span class="text-[10px] text-slate-400">Centang untuk melanjutkan ke link</span>
+                            <span class="text-xs font-semibold text-slate-200 block">Security Confirmation</span>
+                            <span class="text-[10px] text-slate-400">Check to proceed to the link</span>
                         </div>
                     </div>
                     <div class="text-right">
@@ -476,7 +467,7 @@ case '4':
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Memvalidasi Sesi Perangkat...
+                        Validating Device Session...
                     </div>
                     <div class="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden border border-slate-800">
                         <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full w-0 animate-progress rounded-full"></div>
@@ -486,7 +477,7 @@ case '4':
                 <!-- Action Button Success (Hidden Initially) -->
                 <div>
                     <a id="btn-lp5" href="<?= htmlspecialchars($target_url); ?>" class="hidden group relative w-full inline-flex items-center justify-center px-6 py-3.5 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl shadow-lg shadow-indigo-600/30 hover:from-indigo-500 hover:to-violet-500 transition-all duration-300 transform active:scale-[0.98]">
-                        <span>Buka Link Tujuan</span>
+                        <span>Open Destination Link</span>
                         <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                         </svg>
@@ -524,5 +515,14 @@ case '4':
         </html>
         <?php
         break;
-    
-}
+
+    default:
+        // ==================== LP OFF / DIRECT REDIRECT ====================
+        ?>
+        <body class="text-white flex items-center justify-center min-h-screen">
+            <p class="text-sm text-slate-400">Redirecting you to the destination page...</p>
+        </body>
+        </html>
+        <?php
+        break;
+}.
