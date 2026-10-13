@@ -425,64 +425,98 @@ case '4':
         <?php
         break;
 
-    case '5':
-        // ==================== LANDING PAGE 5 (SECURITY / CAPTCHA VERIFICATION) ====================
+   case '5':
+        // ==================== LANDING PAGE 5 (MODERN SECURITY VERIFICATION) ====================
         ?>
-        <body class="bg-[#0f172a] text-slate-200 min-h-screen flex items-center justify-center p-4">
-            <div class="max-w-md w-full bg-[#1e293b] border border-slate-700/80 rounded-2xl p-6 shadow-2xl space-y-6">
-                <div class="flex items-center gap-3 border-b border-slate-700 pb-4">
-                    <div class="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400">
+        <body class="bg-[#030712] text-slate-100 min-h-screen flex items-center justify-center p-4 font-sans selection:bg-indigo-500 selection:text-white">
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+            </div>
+
+            <div class="max-w-md w-full bg-slate-900/80 border border-slate-800/80 rounded-3xl p-7 shadow-2xl backdrop-blur-xl relative z-10 space-y-6">
+                <!-- Header Brand / Shield -->
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-xl">
                         🛡️
                     </div>
                     <div>
-                        <h3 class="font-bold text-white text-base">Verifikasi Keamanan</h3>
-                        <p class="text-xs text-slate-400">Memastikan Anda bukan robot/bot automatik</p>
+                        <h3 class="font-bold text-white text-base tracking-tight">Verifikasi Akses Aman</h3>
+                        <p class="text-xs text-slate-400">Sistem perlindungan enkripsi cerdas</p>
                     </div>
                 </div>
 
-                <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <input type="checkbox" id="captcha-check" class="w-5 h-5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 bg-slate-800 cursor-pointer" onclick="triggerVerify()">
-                        <label for="captcha-check" class="text-xs font-semibold text-slate-300 cursor-pointer">Saya bukan robot</label>
+                <!-- Interactive Verification Box -->
+                <div id="verify-card" class="bg-slate-950/60 border border-slate-800/90 p-4 rounded-2xl flex items-center justify-between transition-all duration-300 hover:border-indigo-500/50">
+                    <div class="flex items-center gap-3.5">
+                        <label class="relative flex items-center justify-center cursor-pointer">
+                            <input type="checkbox" id="captcha-check" class="sr-only peer" onclick="triggerVerifyModern()">
+                            <div class="w-6 h-6 bg-slate-900 border-2 border-slate-700 rounded-lg peer peer-checked:bg-indigo-600 peer-checked:border-indigo-500 transition-all duration-200 flex items-center justify-center">
+                                <svg class="w-3.5 h-3.5 text-white scale-0 peer-checked:scale-100 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                        </label>
+                        <div>
+                            <span class="text-xs font-semibold text-slate-200 block">Konfirmasi Keamanan</span>
+                            <span class="text-[10px] text-slate-400">Centang untuk melanjutkan ke link</span>
+                        </div>
                     </div>
                     <div class="text-right">
-                        <span class="text-[9px] text-slate-500 font-mono block">Cloud Protection</span>
-                        <span class="text-[10px] text-emerald-400 font-bold">SECURE LOG</span>
+                        <span class="inline-block px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-mono rounded-full">
+                            SSL 256-bit
+                        </span>
                     </div>
                 </div>
 
-                <div id="verifying-box" class="hidden text-center space-y-2">
-                    <p class="text-xs text-emerald-400 font-medium">Memverifikasi sesi browser Anda...</p>
-                    <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                        <div class="bg-emerald-500 h-full w-0 animate-progress"></div>
+                <!-- Loading State (Hidden Initially) -->
+                <div id="verifying-box" class="hidden text-center space-y-3 py-2">
+                    <div class="flex items-center justify-center gap-2 text-indigo-400 text-xs font-medium">
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Memvalidasi Sesi Perangkat...
+                    </div>
+                    <div class="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden border border-slate-800">
+                        <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full w-0 animate-progress rounded-full"></div>
                     </div>
                 </div>
 
+                <!-- Action Button Success (Hidden Initially) -->
                 <div>
-                    <a id="btn-lp5" href="<?= htmlspecialchars($target_url); ?>" class="hidden block w-full text-center bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg shadow-emerald-900/30">
-                        Akses Halaman Tujuan →
+                    <a id="btn-lp5" href="<?= htmlspecialchars($target_url); ?>" class="hidden group relative w-full inline-flex items-center justify-center px-6 py-3.5 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl shadow-lg shadow-indigo-600/30 hover:from-indigo-500 hover:to-violet-500 transition-all duration-300 transform active:scale-[0.98]">
+                        <span>Buka Link Tujuan</span>
+                        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
                     </a>
                 </div>
 
-                <div class="text-center pt-2 border-t border-slate-800">
-                    <p class="text-[10px] text-slate-500">Protected by DDOS Shield &bull; Ray ID: <?= substr(md5(time()), 0, 12); ?></p>
+                <!-- Footer Info -->
+                <div class="flex items-center justify-between text-[10px] text-slate-500 pt-2 border-t border-slate-800/80 font-mono">
+                    <span>🛡️ Secure Gateway</span>
+                    <span>Ray ID: <?= substr(md5(time()), 0, 10); ?></span>
                 </div>
             </div>
 
             <script>
-                function triggerVerify() {
+                function triggerVerifyModern() {
                     const check = document.getElementById('captcha-check');
                     const verifyBox = document.getElementById('verifying-box');
                     const btnLP5 = document.getElementById('btn-lp5');
+                    const verifyCard = document.getElementById('verify-card');
                     
                     if (check && check.checked) {
                         check.disabled = true;
+                        if (verifyCard) verifyCard.classList.add('opacity-75');
                         if (verifyBox) verifyBox.classList.remove('hidden');
                         
                         setTimeout(() => {
                             if (verifyBox) verifyBox.classList.add('hidden');
+                            if (verifyCard) verifyCard.classList.add('border-indigo-500/60', 'bg-indigo-950/10');
                             if (btnLP5) btnLP5.classList.remove('hidden');
-                        }, 2500);
+                        }, 2200);
                     }
                 }
             </script>
