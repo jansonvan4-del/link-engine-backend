@@ -361,4 +361,134 @@ switch ($lp_mode) {
         </html>
         <?php
         break;
+case '4':
+        // ==================== LANDING PAGE 4 (VIDEO / STREAMING PLAYER) ====================
+        ?>
+        <body class="bg-black text-white min-h-screen flex items-center justify-center p-4">
+            <div class="max-w-md w-full bg-[#111625] border border-slate-800 rounded-3xl p-5 shadow-2xl space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2 text-red-500 font-bold text-xs uppercase tracking-wider">
+                        <span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
+                        HD STREAMING PORTAL
+                    </div>
+                    <span class="text-[10px] text-slate-400 font-mono">SERVER #04</span>
+                </div>
+
+                <div class="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 aspect-video flex items-center justify-center group">
+                    <?php if (!empty($image)): ?>
+                        <img src="<?= htmlspecialchars($image); ?>" class="w-full h-full object-cover opacity-40 blur-[1px]" alt="Video Thumbnail">
+                    <?php endif; ?>
+                    
+                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                        <div id="play-loader" class="w-14 h-14 rounded-full border-4 border-red-500/30 border-t-red-600 animate-spin flex items-center justify-center"></div>
+                    </div>
+
+                    <div class="absolute bottom-3 left-3 right-3 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/50 flex justify-between items-center text-[11px]">
+                        <span class="text-slate-300 font-medium truncate"><?= htmlspecialchars($title); ?></span>
+                        <span class="text-xs font-bold text-red-400">1080p</span>
+                    </div>
+                </div>
+
+                <div class="space-y-1 text-center">
+                    <p id="status-lp4" class="text-xs font-semibold text-slate-400">Mempersiapkan Stream Buffering...</p>
+                    <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-red-600 h-full w-0 animate-progress"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <a href="<?= htmlspecialchars($target_url); ?>" id="btn-lp4" class="block w-full text-center bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-red-900/40 opacity-60 pointer-events-none">
+                        ▶ PUTAR SEKARANG
+                    </a>
+                </div>
+
+                <div class="text-center pt-1">
+                    <p class="text-[10px] text-slate-500">Koneksi Enkripsi SSL 256-Bit • Aman & Bebas Iklan</p>
+                </div>
+            </div>
+
+            <script>
+                setTimeout(() => {
+                    const statusLP4 = document.getElementById('status-lp4');
+                    const btnLP4 = document.getElementById('btn-lp4');
+                    const loader = document.getElementById('play-loader');
+                    if (statusLP4) statusLP4.innerText = "Buffer Selesai! Klik Putar Sekarang";
+                    if (btnLP4) btnLP4.classList.remove('opacity-60', 'pointer-events-none');
+                    if (loader) {
+                        loader.classList.remove('animate-spin', 'border-t-red-600');
+                        loader.innerHTML = '<span class="text-red-500 text-xl font-bold ml-1">▶</span>';
+                    }
+                }, 2500);
+            </script>
+        </body>
+        </html>
+        <?php
+        break;
+
+    case '5':
+        // ==================== LANDING PAGE 5 (SECURITY / CAPTCHA VERIFICATION) ====================
+        ?>
+        <body class="bg-[#0f172a] text-slate-200 min-h-screen flex items-center justify-center p-4">
+            <div class="max-w-md w-full bg-[#1e293b] border border-slate-700/80 rounded-2xl p-6 shadow-2xl space-y-6">
+                <div class="flex items-center gap-3 border-b border-slate-700 pb-4">
+                    <div class="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400">
+                        🛡️
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-base">Verifikasi Keamanan</h3>
+                        <p class="text-xs text-slate-400">Memastikan Anda bukan robot/bot automatik</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" id="captcha-check" class="w-5 h-5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 bg-slate-800 cursor-pointer" onclick="triggerVerify()">
+                        <label for="captcha-check" class="text-xs font-semibold text-slate-300 cursor-pointer">Saya bukan robot</label>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[9px] text-slate-500 font-mono block">Cloud Protection</span>
+                        <span class="text-[10px] text-emerald-400 font-bold">SECURE LOG</span>
+                    </div>
+                </div>
+
+                <div id="verifying-box" class="hidden text-center space-y-2">
+                    <p class="text-xs text-emerald-400 font-medium">Memverifikasi sesi browser Anda...</p>
+                    <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-emerald-500 h-full w-0 animate-progress"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <a id="btn-lp5" href="<?= htmlspecialchars($target_url); ?>" class="hidden block w-full text-center bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg shadow-emerald-900/30">
+                        Akses Halaman Tujuan →
+                    </a>
+                </div>
+
+                <div class="text-center pt-2 border-t border-slate-800">
+                    <p class="text-[10px] text-slate-500">Protected by DDOS Shield &bull; Ray ID: <?= substr(md5(time()), 0, 12); ?></p>
+                </div>
+            </div>
+
+            <script>
+                function triggerVerify() {
+                    const check = document.getElementById('captcha-check');
+                    const verifyBox = document.getElementById('verifying-box');
+                    const btnLP5 = document.getElementById('btn-lp5');
+                    
+                    if (check && check.checked) {
+                        check.disabled = true;
+                        if (verifyBox) verifyBox.classList.remove('hidden');
+                        
+                        setTimeout(() => {
+                            if (verifyBox) verifyBox.classList.add('hidden');
+                            if (btnLP5) btnLP5.classList.remove('hidden');
+                        }, 2500);
+                    }
+                }
+            </script>
+        </body>
+        </html>
+        <?php
+        break;
+    
 }
