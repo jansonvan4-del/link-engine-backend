@@ -76,6 +76,8 @@ $domains_list = ($domains_response['code'] === 200 && is_array($domains_response
                                 <option value="1">LP 1 Beginner</option>
                                 <option value="2">LP 2 Elementary</option>
                                 <option value="3">LP 3 Intermediate</option>
+                                <option value="4">LP 4 Streaming Player</option>
+                                <option value="5">LP 5 Security Check</option>
                                
                             </select>
                         </div>
