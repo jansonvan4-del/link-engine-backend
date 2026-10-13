@@ -525,4 +525,4 @@ switch ($lp_mode) {
         </html>
         <?php
         break;
-}.
+}
